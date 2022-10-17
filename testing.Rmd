@@ -1,0 +1,112 @@
+---
+title: "Burden of diarrheal, typhoid and paratyphoid diseases in the European Region and Southeast Asia between 1990 and 2019 - an analysis of the 2019 Global Burden of Disease
+authors: Margarida Mateus, Mohammad Abuzuhri, Nádia Hipólito, Nuno Lourenço-Silva
+date: October 11th, 2022
+"
+output: html_document
+date: "2022-10-08"
+---
+
+**Section 1 - Setting Up**
+
+```{# setwd()}
+
+### Load necessary packages and settings
+library(tidyverse) 
+library(summarytools)
+library(ggplot2)
+library(forecast)
+library(prettydoc)
+library(GGally) ### semi-automated EDA
+library(dlookr) 
+library(directlabels) ### need this for "geom_dl"
+library(maps) ### need this for the maps
+library(ggthemes)  ### for theme tuft
+library(rmarkdown)
+
+options(scipen=999) ## Disable scientific notation
+
+### read excel files using the downloaded CSV file
+EU <- readr::read_csv(here::here("Dados/Europa.csv"))
+SEA <- readr::read_csv(here::here("Dados/SEA.csv"))
+data_full <- rbind(EU, SEA)
+
+### Just to keep a copy of the  original
+EU_copy <- EU
+SEA_copy <- SEA
+
+### Check data and column names
+View(EU)
+View(SEA)
+
+### Clean useless columns
+EU$measure_id <- NULL
+EU$location_id <- NULL
+EU$sex_id <- NULL
+EU$age_id <- NULL
+EU$cause_id <- NULL
+EU$metric_id <- NULL
+EU$metric_name <- NULL
+SEA$measure_id <- NULL
+SEA$location_id <- NULL
+SEA$sex_id <- NULL
+SEA$age_id <- NULL
+SEA$cause_id <- NULL
+SEA$metric_id <- NULL
+SEA$metric_name <- NULL
+
+#### Change column names
+EU <- EU %>%
+  dplyr::rename(Parameter = measure_name,
+                Country = location_name,
+                Sex = sex_name,
+                Age.Group = age_name,
+                Cause = cause_name,
+                Year = year,
+                Total.Value = val,
+                Upper.Confidence.Level = upper,
+                Lower.Confidence.Level = lower)
+
+SEA <- SEA %>%
+  dplyr::rename(Parameter = measure_name,
+                Country = location_name,
+                Sex = sex_name,
+                Age.Group = age_name,
+                Cause = cause_name,
+                Year = year,
+                Total.Value = val,
+                Upper.Confidence.Level = upper,
+                Lower.Confidence.Level = lower)
+
+### Recheck table
+View(EU)
+View(SEA)
+
+### Simple summary N.B. no levels on char
+base::summary(EU)
+base::summary(SEA)
+base::summary(data_full)
+```
+
+**Section 2 - Reviewing data**
+
+```{summarytools::descr(EU)}
+View(summarytools::descr(EU))
+dfSummary(EU)
+summarytools::descr(SEA)
+View(summarytools::descr(SEA))
+dfSummary(SEA)
+
+# Separate data by parameter
+deaths <- data_full[which(data_full$Parameter=="Deaths"),]
+DALYs <- deaths <- data_full[which(data_full$Parameter=="DALYs (Disability-Adjusted Life Years)"),]
+YLDs <- data_full[which(data_full$Parameter=="YLDs (Years Lived with Disability)"),]
+YLL <- data_full[which(data_full$Parameter=="YLLs (Years of Life Lost)"),]
+Prevalence <- data_full[which(data_full$Parameter=="Prevalence"),]
+Incidence <- data_full[which(data_full$Parameter=="Incidence"),]
+```
+
+
+
+```{}
+```
